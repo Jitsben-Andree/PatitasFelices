@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head><title>Agenda</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Agenda Médica</h1>
+            <p class="text-gray-500 text-sm">Próximos turnos programados</p>
+        </div>
+        <a href="/citas/nueva" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md flex items-center transition-all">
+            <i class="fa-solid fa-plus mr-2"></i> Reservar Turno
+        </a>
+    </div>
+
+    <!-- Lista Tipo Tarjetas para Móvil / Tabla para PC -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-100">
+                <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Horario</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Paciente</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Motivo</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Dr. Asignado</th>
+                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Estado</th>
+                    <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Acción</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 bg-white">
+                <tr th:each="cita : ${citas}" class="hover:bg-blue-50/50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col">
+                            <span class="text-lg font-bold text-blue-600 font-mono" th:text="${#temporals.format(cita.fechaHora, 'HH:mm')}">10:00</span>
+                            <span class="text-xs text-gray-400" th:text="${#temporals.format(cita.fechaHora, 'dd MMM')}">01 Ene</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="font-bold text-gray-900" th:text="${cita.mascota.nombre}">Fido</div>
+                        <div class="text-xs text-gray-500" th:text="${cita.mascota.propietario.persona.nombres}">Dueño</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800" th:text="${cita.motivo}">Vacuna</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span th:if="${cita.veterinario != null}" th:text="${cita.veterinario.persona.apellidos}">Dr. House</span>
+                        <span th:unless="${cita.veterinario != null}" class="text-gray-300 italic">--</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <!-- Badges -->
+                        <span th:if="${cita.estado.name() == 'PENDIENTE'}" class="px-2 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-700">Pendiente</span>
+                        <span th:if="${cita.estado.name() == 'CONFIRMADA'}" class="px-2 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700">Confirmada</span>
+                        <span th:if="${cita.estado.name() == 'CANCELADA'}" class="px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700">Cancelada</span>
+                        <span th:if="${cita.estado.name() == 'ATENDIDA'}" class="px-2 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700">Atendida</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a th:href="@{/citas/cancelar/{id}(id=${cita.idCita})}" onclick="return confirm('¿Cancelar cita?')" class="text-red-400 hover:text-red-600 transition-colors" title="Cancelar">
+                            <i class="fa-regular fa-trash-can text-lg"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

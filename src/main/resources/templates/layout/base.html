@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' - Patitas Felices'">Patitas Felices</title>
+
+    <!-- Tailwind CSS (CDN para desarrollo) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configuración opcional de Tailwind para colores personalizados -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6', // Azul
+                        secondary: '#64748b', // Gris azulado
+                        dark: '#1e293b', // Fondo sidebar
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+<div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar (Menú Lateral) -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 transition-all duration-300 shadow-2xl z-20">
+        <!-- Logo -->
+        <div class="h-16 flex items-center justify-center border-b border-slate-800 bg-slate-950 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            <a href="/home" class="flex items-center space-x-2 text-white transition-transform transform group-hover:scale-105">
+                <i class="fa-solid fa-paw text-2xl text-yellow-500 animate-pulse"></i>
+                <span class="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Patitas Felices</span>
+            </a>
+        </div>
+
+        <!-- Menú de Navegación -->
+        <nav class="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+            <ul class="space-y-1 px-3">
+
+                <!-- TODOS ven Inicio -->
+                <li>
+                    <a href="/home"
+                       class="flex items-center px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all group border-l-4 border-transparent hover:border-blue-500"
+                       th:classappend="${titulo == 'Dashboard'} ? '!bg-blue-600 !text-white shadow-lg shadow-blue-500/30 !border-blue-400' : ''">
+                        <i class="fa-solid fa-house w-6 text-center group-hover:scale-110 transition-transform"></i>
+                        <span class="ml-3 font-medium">Inicio</span>
+                    </a>
+                </li>
+
+                <!-- SECCIÓN RECEPCIÓN: Solo Admin y Recepcionista -->
+                <div th:if="${session.usuarioLogueado.rol.nombreRol == 'ADMIN' or session.usuarioLogueado.rol.nombreRol == 'RECEPCIONISTA'}">
+                    <li class="px-4 mt-6 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                        <span class="flex-1">Recepción</span>
+                        <div class="h-px bg-slate-800 w-1/3"></div>
+                    </li>
+
+                    <li>
+                        <a href="/recepcion" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all group"
+                           th:classappend="${titulo == 'Panel de Recepción'} ? '!bg-slate-800 !text-white border-l-4 border-blue-500' : ''">
+                            <i class="fa-solid fa-bell-concierge w-6 text-center text-blue-400 group-hover:text-white transition-colors"></i>
+                            <span class="ml-3">Panel Diario</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/propietarios" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all group"
+                           th:classappend="${titulo == 'Listado de Clientes'} ? '!bg-slate-800 !text-white border-l-4 border-blue-500' : ''">
+                            <i class="fa-solid fa-users w-6 text-center text-blue-400 group-hover:text-white transition-colors"></i>
+                            <span class="ml-3">Clientes</span>
+                        </a>
+                    </li>
+                </div>
+
+                <!-- SECCIÓN COMÚN (Agenda y Pacientes) -->
+                <li class="px-4 mt-6 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                    <span class="flex-1">Gestión Diaria</span>
+                    <div class="h-px bg-slate-800 w-1/3"></div>
+                </li>
+                <li>
+                    <a href="/citas" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all group"
+                       th:classappend="${titulo == 'Agenda de Citas'} ? '!bg-slate-800 !text-white border-l-4 border-purple-500' : ''">
+                        <i class="fa-solid fa-calendar-days w-6 text-center text-purple-400 group-hover:text-white transition-colors"></i>
+                        <span class="ml-3">Agenda</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/mascotas" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all group"
+                       th:classappend="${titulo == 'Pacientes (Mascotas)'} ? '!bg-slate-800 !text-white border-l-4 border-purple-500' : ''">
+                        <i class="fa-solid fa-dog w-6 text-center text-purple-400 group-hover:text-white transition-colors"></i>
+                        <span class="ml-3">Pacientes</span>
+                    </a>
+                </li>
+
+                <!-- SECCIÓN CLÍNICA: Solo Veterinarios y Admin -->
+                <div th:if="${session.usuarioLogueado.rol.nombreRol == 'ADMIN' or session.usuarioLogueado.rol.nombreRol == 'VETERINARIO'}">
+                    <li class="px-4 mt-6 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                        <span class="flex-1">Clínica</span>
+                        <div class="h-px bg-slate-800 w-1/3"></div>
+                    </li>
+                    <li>
+                        <a href="/mascotas" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all group">
+                            <i class="fa-solid fa-stethoscope w-6 text-center text-emerald-400 group-hover:text-white transition-colors"></i>
+                            <span class="ml-3">Consultas Médicas</span>
+                        </a>
+                    </li>
+                </div>
+
+                <!-- SECCIÓN TIENDA: Solo Recepcionista y Admin -->
+                <div th:if="${session.usuarioLogueado.rol.nombreRol == 'ADMIN' or session.usuarioLogueado.rol.nombreRol == 'RECEPCIONISTA'}">
+                    <li class="px-4 mt-6 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center">
+                        <span class="flex-1">Tienda</span>
+                        <div class="h-px bg-slate-800 w-1/3"></div>
+                    </li>
+                    <li>
+                        <a href="/ventas/pos" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all group"
+                           th:classappend="${titulo == 'Punto de Venta'} ? '!bg-slate-800 !text-white border-l-4 border-orange-500' : ''">
+                            <i class="fa-solid fa-cash-register w-6 text-center text-orange-400 group-hover:text-white transition-colors"></i>
+                            <span class="ml-3">Punto de Venta</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/ventas" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all group"
+                           th:classappend="${titulo == 'Historial de Ventas'} ? '!bg-slate-800 !text-white border-l-4 border-orange-500' : ''">
+                            <i class="fa-solid fa-receipt w-6 text-center text-orange-400 group-hover:text-white transition-colors"></i>
+                            <span class="ml-3">Historial Ventas</span>
+                        </a>
+                    </li>
+                </div>
+
+                <!-- SECCIÓN INVENTARIO -->
+                <li>
+                    <a href="/inventario" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all group"
+                       th:classappend="${titulo == 'Gestión de Inventario'} ? '!bg-slate-800 !text-white border-l-4 border-orange-500' : ''">
+                        <i class="fa-solid fa-boxes-stacked w-6 text-center text-orange-400 group-hover:text-white transition-colors"></i>
+                        <span class="ml-3">Inventario</span>
+                    </a>
+                </li>
+
+                <!-- ADMINISTRACIÓN: EXCLUSIVO ADMIN -->
+                <div th:if="${session.usuarioLogueado.rol.nombreRol == 'ADMIN'}">
+                    <li class="px-4 mt-6 mb-2 text-xs font-bold text-red-400 uppercase tracking-wider flex items-center">
+                        <span class="flex-1">Admin Zone</span>
+                        <div class="h-px bg-red-900/50 w-1/3"></div>
+                    </li>
+                    <li>
+                        <a href="/admin/usuarios" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-red-900/20 hover:text-white transition-all group border border-dashed border-slate-700 hover:border-red-500"
+                           th:classappend="${titulo == 'Gestión de Usuarios'} ? '!bg-red-900/30 !text-white !border-red-500' : ''">
+                            <i class="fa-solid fa-user-shield w-6 text-center text-red-500 group-hover:text-white transition-colors"></i>
+                            <span class="ml-3">Usuarios y Permisos</span>
+                        </a>
+                    </li>
+                    <li class="mt-1">
+                        <a href="/admin/catalogos" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-red-900/20 hover:text-white transition-all group border border-dashed border-slate-700 hover:border-red-500"
+                           th:classappend="${titulo == 'Gestión de Catálogos'} ? '!bg-red-900/30 !text-white !border-red-500' : ''">
+                            <i class="fa-solid fa-tags w-6 text-center text-red-500 group-hover:text-white transition-colors"></i>
+                            <span class="ml-3">Especies y Razas</span>
+                        </a>
+                    </li>
+                </div>
+            </ul>
+        </nav>
+
+        <!-- Footer Sidebar (Perfil de Usuario Mejorado) -->
+        <div class="border-t border-slate-800 p-4 bg-slate-950">
+            <div class="flex items-center gap-3">
+                <!-- Avatar con Inicial dinámica -->
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-slate-800 shrink-0">
+                    <span th:text="${#strings.substring(session.usuarioLogueado.persona.nombres,0,1)}">U</span>
+                </div>
+
+                <!-- Info Usuario -->
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-white truncate" th:text="${session.usuarioLogueado.persona.nombres}">Usuario</p>
+                    <span class="inline-flex items-center rounded-md bg-slate-800 px-1.5 py-0.5 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-400/20 truncate">
+                            <span th:text="${session.usuarioLogueado.rol.nombreRol}">Rol</span>
+                        </span>
+                </div>
+
+                <!-- Botón Salir Seguro -->
+                <a href="/logout"
+                   onclick="return confirm('¿Estás seguro de que deseas cerrar sesión?');"
+                   class="text-slate-500 hover:text-red-400 transition-all p-2 rounded-lg hover:bg-white/5"
+                   title="Cerrar Sesión">
+                    <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Área de Contenido Principal -->
+    <div class="flex-1 flex flex-col overflow-hidden relative">
+
+        <!-- Header Superior -->
+        <header class="h-16 bg-white shadow-sm border-b border-gray-200 flex items-center justify-between px-6 z-10">
+            <div class="flex items-center gap-4">
+                <!-- Botón Mobile (Visual) -->
+                <button class="md:hidden text-gray-500 hover:text-blue-600">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <span th:if="${titulo == 'Dashboard'}">🏠</span>
+                    <span th:if="${titulo != 'Dashboard'}" class="text-blue-600">/</span>
+                    <span th:text="${titulo}">Dashboard</span>
+                </h2>
+            </div>
+
+            <!-- Botones de acción rápida -->
+            <div class="flex items-center space-x-4">
+                <button class="p-2 text-gray-400 hover:text-blue-600 transition-colors relative group">
+                    <i class="fa-solid fa-bell text-xl"></i>
+                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                    <!-- Tooltip simple -->
+                    <span class="absolute top-full right-0 mt-2 w-48 bg-slate-800 text-white text-xs rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                            Sin notificaciones nuevas
+                        </span>
+                </button>
+                <a href="/citas/nueva" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg shadow-md shadow-blue-500/20 transition-all hover:-translate-y-0.5 flex items-center">
+                    <i class="fa-solid fa-plus mr-2"></i> Nueva Cita
+                </a>
+            </div>
+        </header>
+
+        <!-- Contenedor Dinámico de Vistas -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+
+            <!-- Alertas Flash Mejoradas -->
+            <div th:if="${success != null}" class="mb-6 flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50 border border-green-200 shadow-sm" role="alert">
+                <i class="fa-solid fa-circle-check text-xl mr-3"></i>
+                <div>
+                    <span class="font-bold">¡Éxito!</span> <span th:text="${success}">Operación completada.</span>
+                </div>
+            </div>
+            <div th:if="${error != null}" class="mb-6 flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 border border-red-200 shadow-sm" role="alert">
+                <i class="fa-solid fa-circle-exclamation text-xl mr-3"></i>
+                <div>
+                    <span class="font-bold">Error:</span> <span th:text="${error}">Algo salió mal.</span>
+                </div>
+            </div>
+            <div th:if="${warning != null}" class="mb-6 flex items-center p-4 mb-4 text-yellow-800 rounded-lg bg-yellow-50 border border-yellow-200 shadow-sm" role="alert">
+                <i class="fa-solid fa-triangle-exclamation text-xl mr-3"></i>
+                <div>
+                    <span class="font-bold">Atención:</span> <span th:text="${warning}">Advertencia.</span>
+                </div>
+            </div>
+
+            <!-- Aquí se inyectará el contenido -->
+            <div layout:fragment="content" class="animate-fade-in-up">
+                <!-- Contenido específico -->
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Scripts opcionales -->
+<script>
+    // Cerrar alertas automáticamente
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('[role="alert"]');
+        alerts.forEach(alert => {
+            alert.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+            alert.style.opacity = "0";
+            alert.style.transform = "translateY(-10px)";
+            setTimeout(() => alert.remove(), 500);
+        });
+    }, 5000);
+</script>
+
+<!-- Animación CSS personalizada -->
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+        animation: fadeInUp 0.4s ease-out forwards;
+    }
+</style>
+</body>
+</html>

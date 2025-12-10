@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head><title>Gestión de Cliente</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="max-w-4xl mx-auto">
+        <!-- Navegación simple -->
+        <a href="/propietarios" class="inline-flex items-center text-sm text-slate-500 hover:text-blue-600 mb-6 transition-colors">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Volver al directorio
+        </a>
+
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <div class="bg-slate-50 px-8 py-6 border-b border-gray-100 flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">Información del Cliente</h2>
+                    <p class="text-sm text-gray-500 mt-1">Complete los datos de contacto y facturación.</p>
+                </div>
+                <div class="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                    <i class="fa-solid fa-user-pen"></i>
+                </div>
+            </div>
+
+            <form th:action="@{/propietarios/guardar}" th:object="${propietario}" method="post" class="p-8">
+                <input type="hidden" th:field="*{idPropietario}" />
+                <input type="hidden" th:field="*{persona.idPersona}" />
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <!-- Datos Personales -->
+                    <div class="md:col-span-2">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Datos Personales</h3>
+                    </div>
+
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombres</label>
+                        <input type="text" th:field="*{persona.nombres}" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Ej. María">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Apellidos</label>
+                        <input type="text" th:field="*{persona.apellidos}" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Ej. Gonzáles">
+                    </div>
+
+                    <!-- Datos Contacto -->
+                    <div class="md:col-span-2 mt-2">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Contacto</h3>
+                    </div>
+
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fa-regular fa-envelope"></i></span>
+                            <input type="email" th:field="*{persona.correoElectronico}" class="pl-10 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="cliente@email.com">
+                        </div>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fa-solid fa-phone"></i></span>
+                            <input type="text" th:field="*{persona.telefono}" class="pl-10 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="999 000 000">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fa-solid fa-map-pin"></i></span>
+                            <input type="text" th:field="*{persona.direccion}" class="pl-10 w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Dirección completa">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 pt-6 border-t border-gray-100 flex justify-end gap-3">
+                    <a href="/propietarios" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors">Cancelar</a>
+                    <button type="submit" class="px-5 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Panel Diario</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+
+    <!-- Encabezado con Fecha y Hora -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-gradient-to-r from-blue-600 to-blue-800 p-6 rounded-2xl shadow-lg text-white">
+        <div>
+            <h1 class="text-3xl font-bold">Recepción</h1>
+            <p class="text-blue-100 mt-1 opacity-90">Gestión de flujo de pacientes del día</p>
+        </div>
+        <div class="text-right mt-4 md:mt-0">
+            <div class="text-3xl font-mono font-bold" id="reloj">00:00</div>
+            <div class="text-sm font-medium opacity-80" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Lunes, 01 Enero</div>
+        </div>
+    </div>
+
+    <!-- Métricas Rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Citas Hoy -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center">
+            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl mr-4">
+                <i class="fa-solid fa-calendar-day"></i>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-gray-800" th:text="${#lists.size(citasHoy)}">0</div>
+                <div class="text-xs text-gray-500 font-medium uppercase tracking-wide">Citas para Hoy</div>
+            </div>
+        </div>
+
+        <!-- En Sala de Espera (Simulado) -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center">
+            <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-xl mr-4">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-gray-800">0</div>
+                <div class="text-xs text-gray-500 font-medium uppercase tracking-wide">En Sala de Espera</div>
+            </div>
+        </div>
+
+        <!-- Accesos Rápidos -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <a href="/propietarios/nuevo" class="flex flex-col items-center justify-center w-full hover:bg-gray-50 rounded-lg p-2 transition-colors text-gray-600 hover:text-blue-600">
+                <i class="fa-solid fa-user-plus text-xl mb-1"></i>
+                <span class="text-xs font-bold">Nuevo Cliente</span>
+            </a>
+            <div class="h-8 w-px bg-gray-200 mx-2"></div>
+            <a href="/citas/nueva" class="flex flex-col items-center justify-center w-full hover:bg-gray-50 rounded-lg p-2 transition-colors text-gray-600 hover:text-blue-600">
+                <i class="fa-solid fa-plus-circle text-xl mb-1"></i>
+                <span class="text-xs font-bold">Agendar</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Tabla de Agenda del Día -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <h3 class="font-bold text-gray-800 flex items-center">
+                <i class="fa-regular fa-clock text-gray-400 mr-2"></i> Agenda del Día
+            </h3>
+            <span class="text-xs font-medium px-2.5 py-0.5 rounded bg-green-100 text-green-800">
+                    <span class="w-2 h-2 bg-green-500 rounded-full inline-block mr-1"></span> En curso
+                </span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-100">
+                <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold tracking-wider">
+                <tr>
+                    <th class="px-6 py-3 text-left">Hora</th>
+                    <th class="px-6 py-3 text-left">Paciente</th>
+                    <th class="px-6 py-3 text-left">Motivo</th>
+                    <th class="px-6 py-3 text-left">Doctor</th>
+                    <th class="px-6 py-3 text-center">Estado</th>
+                    <th class="px-6 py-3 text-right">Acción</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                <tr th:each="cita : ${citasHoy}" class="hover:bg-blue-50/50 transition-colors group">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="font-mono font-bold text-blue-600 text-lg" th:text="${#temporals.format(cita.fechaHora, 'HH:mm')}">10:00</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="h-8 w-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold mr-3">
+                                <span th:text="${#strings.substring(cita.mascota.nombre,0,1)}">F</span>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-900" th:text="${cita.mascota.nombre}">Fido</div>
+                                <div class="text-xs text-gray-500" th:text="${cita.mascota.propietario.persona.nombres} + ' ' + ${cita.mascota.propietario.persona.apellidos}">Dueño</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-600 border border-gray-200" th:text="${cita.motivo}">Consulta</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">
+                        <i class="fa-solid fa-user-doctor text-gray-300 mr-1"></i>
+                        <span th:if="${cita.veterinario != null}" th:text="${cita.veterinario.persona.apellidos}">Dr. House</span>
+                        <span th:unless="${cita.veterinario != null}" class="italic text-gray-400">--</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <!-- Badge de Estado mejorado -->
+                        <span th:if="${cita.estado.name() == 'PENDIENTE'}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                    <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1.5"></span> Pendiente
+                                </span>
+                        <span th:if="${cita.estado.name() == 'CONFIRMADA'}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                                    <span class="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span> Confirmada
+                                </span>
+                        <!-- Otros estados... -->
+                    </td>
+                    <td class="px-6 py-4 text-right text-sm font-medium">
+                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors opacity-0 group-hover:opacity-100" title="Marcar Llegada">
+                            <i class="fa-regular fa-square-check text-xl"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                <!-- Empty State -->
+                <tr th:if="${#lists.isEmpty(citasHoy)}">
+                    <td colspan="6" class="px-6 py-12 text-center">
+                        <div class="flex flex-col items-center justify-center text-gray-400">
+                            <div class="bg-gray-50 rounded-full p-4 mb-3">
+                                <i class="fa-solid fa-mug-hot text-2xl"></i>
+                            </div>
+                            <p class="font-medium text-gray-500">No hay citas programadas para hoy.</p>
+                            <p class="text-sm">¡Parece un buen momento para organizar el inventario!</p>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Script Reloj simple -->
+<script>
+    function actualizarReloj() {
+        const now = new Date();
+        document.getElementById('reloj').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
+    setInterval(actualizarReloj, 1000);
+    actualizarReloj();
+</script>
+
+</body>
+</html>

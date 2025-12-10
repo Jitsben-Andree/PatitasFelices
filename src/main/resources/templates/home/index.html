@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base.html}">
+<head>
+    <title>Inicio</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+
+    <!-- Tarjeta de Bienvenida -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8 border-l-4 border-blue-500">
+        <h2 class="text-2xl font-bold text-gray-800">¡Hola, <span th:text="${usuario.nombreUsuario}" class="text-blue-600">Usuario</span>!</h2>
+        <p class="text-gray-600 mt-2">Bienvenido al Sistema de Gestión Veterinaria. Aquí tienes un resumen rápido de hoy.</p>
+    </div>
+
+    <!-- Grid de Accesos Rápidos (Tarjetas) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+        <!-- Card 1: Citas -->
+        <a href="/citas" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 group">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <span class="text-sm font-semibold text-gray-400">Agenda</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800">Citas</h3>
+            <p class="text-sm text-gray-500 mt-1">Ver agenda del día</p>
+        </a>
+
+        <!-- Card 2: Pacientes -->
+        <a href="/mascotas" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 group">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-dog"></i>
+                </div>
+                <span class="text-sm font-semibold text-gray-400">Pacientes</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800">Mascotas</h3>
+            <p class="text-sm text-gray-500 mt-1">Gestión clínica</p>
+        </a>
+
+        <!-- Card 3: Inventario -->
+        <a href="/inventario" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 group">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <span class="text-sm font-semibold text-gray-400">Stock</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800">Inventario</h3>
+            <p class="text-sm text-gray-500 mt-1">Control de productos</p>
+        </a>
+
+        <!-- Card 4: Ventas -->
+        <a href="/ventas/pos" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 group">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-cash-register"></i>
+                </div>
+                <span class="text-sm font-semibold text-gray-400">Caja</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800">Vender</h3>
+            <p class="text-sm text-gray-500 mt-1">Punto de venta</p>
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

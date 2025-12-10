@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head><title>Inventario</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Inventario</h1>
+            <p class="text-gray-500 text-sm">Control de stock y farmacia</p>
+        </div>
+        <a href="/inventario/nuevo" class="bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg shadow-md shadow-orange-500/20 flex items-center transition-all">
+            <i class="fa-solid fa-box-open mr-2"></i> Alta de Producto
+        </a>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-100">
+                <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Producto</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Categoría</th>
+                    <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Precio</th>
+                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Stock</th>
+                    <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Acciones</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 bg-white">
+                <tr th:each="prod : ${productos}" class="hover:bg-orange-50/30 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="font-bold text-gray-900" th:text="${prod.nombreProducto}">Nombre</div>
+                        <div class="text-xs text-gray-400" th:text="${prod.proveedor.nombreProveedor}">Prov</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800" th:text="${prod.categoria.nombreCategoria}">Cat</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-800" th:text="'S/ ' + ${prod.precio}">0.00</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span th:if="${prod.stock > 10}" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700" th:text="${prod.stock}">High</span>
+                        <span th:if="${prod.stock <= 10 && prod.stock > 0}" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700" th:text="${prod.stock}">Low</span>
+                        <span th:if="${prod.stock == 0}" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">Agotado</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                        <div class="flex justify-center gap-3">
+                            <a th:href="@{/inventario/editar/{id}(id=${prod.idProducto})}" class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-pen"></i></a>
+                            <a th:href="@{/inventario/eliminar/{id}(id=${prod.idProducto})}" onclick="return confirm('¿Borrar?')" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
