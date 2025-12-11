@@ -1,0 +1,35 @@
+services:
+ 
+  db_patitas:
+    image: postgres:15-alpine
+    container_name: postgres_patitas
+    restart: always
+    environment:
+      POSTGRES_DB: db_patitasFelices  
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "0102"      
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+
+  app_patitas:
+    build: .
+    container_name: app_patitas_web
+    restart: always
+    ports:
+      - "8019:8019" 
+    depends_on:
+      - db_patitas
+    environment:
+      SERVER_PORT: 8019
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db_patitas:5432/db_patitasFelices
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: "0102"
+      
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+
+volumes:
+  pgdata:
