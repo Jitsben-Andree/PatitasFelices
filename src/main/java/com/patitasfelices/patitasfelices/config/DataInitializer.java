@@ -9,16 +9,15 @@ import com.patitasfelices.patitasfelices.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import java.util.Optional;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
     @Autowired
     private RolRepository rolRepository;
-
     @Autowired
     private PersonaRepository personaRepository;
 
@@ -26,28 +25,35 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("---- VERIFICANDO DATOS INICIALES ----");
 
-        // 1. Crear Roles si no existen
         crearRolSiNoExiste("ADMIN");
         crearRolSiNoExiste("VETERINARIO");
         crearRolSiNoExiste("RECEPCIONISTA");
 
-        // 2. Crear Usuario Admin por defecto si no existe
         if (!usuarioRepository.existsByNombreUsuario("admin")) {
             System.out.println("Creando usuario administrador por defecto...");
 
-            // Paso A: Crear la Persona
-            Persona personaAdmin = new Persona();
-            personaAdmin.setNombres("Super");
-            personaAdmin.setApellidos("Administrador");
-            personaAdmin.setCorreoElectronico("admin@patitasfelices.com");
-            personaAdmin.setDireccion("Sede Central");
-            personaAdmin.setTelefono("000-000-000");
-            personaRepository.save(personaAdmin);
+            // BUSCAR SI LA PERSONA YA EXISTE POR CORREO
+            String emailAdmin = "admin@patitasfelices.com";
+            Optional<Persona> personaExistente = personaRepository.findByCorreoElectronico(emailAdmin);
 
-            // Paso B: Asignar Rol
+            Persona personaAdmin;
+            if (personaExistente.isPresent()) {
+                // Si ya existe, usamos esa misma
+                personaAdmin = personaExistente.get();
+                System.out.println("-> Persona encontrada, reutilizando registro existente.");
+            } else {
+                // Si no existe, creamos una nueva
+                personaAdmin = new Persona();
+                personaAdmin.setNombres("Super");
+                personaAdmin.setApellidos("Administrador");
+                personaAdmin.setCorreoElectronico(emailAdmin);
+                personaAdmin.setDireccion("Sede Central");
+                personaAdmin.setTelefono("000-000-000");
+                // No guardamos explícitamente aquí porque el Cascade del Usuario lo hará si es nuevo
+            }
+
             Rol rolAdmin = rolRepository.findByNombreRol("ADMIN").get();
 
-            // Paso C: Crear Usuario
             Usuario usuarioAdmin = new Usuario();
             usuarioAdmin.setNombreUsuario("admin");
             usuarioAdmin.setContrasena("admin123");
@@ -55,7 +61,7 @@ public class DataInitializer implements CommandLineRunner {
             usuarioAdmin.setRol(rolAdmin);
 
             usuarioRepository.save(usuarioAdmin);
-            System.out.println("---- USUARIO 'admin' CREADO CON ÉXITO (Pass: admin123) ----");
+            System.out.println("---- USUARIO 'admin' CREADO/RESTAURADO CON ÉXITO ----");
         } else {
             System.out.println("---- EL USUARIO 'admin' YA EXISTE - SE OMITE CREACIÓN ----");
         }
