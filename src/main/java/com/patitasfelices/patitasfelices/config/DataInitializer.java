@@ -32,24 +32,22 @@ public class DataInitializer implements CommandLineRunner {
         if (!usuarioRepository.existsByNombreUsuario("admin")) {
             System.out.println("Creando usuario administrador por defecto...");
 
-            // BUSCAR SI LA PERSONA YA EXISTE POR CORREO
             String emailAdmin = "admin@patitasfelices.com";
             Optional<Persona> personaExistente = personaRepository.findByCorreoElectronico(emailAdmin);
 
             Persona personaAdmin;
             if (personaExistente.isPresent()) {
-                // Si ya existe, usamos esa misma
                 personaAdmin = personaExistente.get();
                 System.out.println("-> Persona encontrada, reutilizando registro existente.");
             } else {
-                // Si no existe, creamos una nueva
+
                 personaAdmin = new Persona();
                 personaAdmin.setNombres("Super");
                 personaAdmin.setApellidos("Administrador");
                 personaAdmin.setCorreoElectronico(emailAdmin);
                 personaAdmin.setDireccion("Sede Central");
                 personaAdmin.setTelefono("000-000-000");
-                // No guardamos explícitamente aquí porque el Cascade del Usuario lo hará si es nuevo
+
             }
 
             Rol rolAdmin = rolRepository.findByNombreRol("ADMIN").get();

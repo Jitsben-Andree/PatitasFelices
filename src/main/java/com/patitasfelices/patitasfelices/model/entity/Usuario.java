@@ -22,8 +22,7 @@ public class Usuario {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_persona", nullable = false)
     private Persona persona;
-
-    // Relación Muchos a 1 con Rol
+    
     @ManyToOne
     @JoinColumn(name = "id_rol", nullable = false)
     private Rol rol;
